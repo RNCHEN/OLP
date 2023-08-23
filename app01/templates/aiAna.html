@@ -1,0 +1,94 @@
+{% extends 'index.html' %}
+
+{% block content %}
+    <script>
+        var obj = document.getElementById("ai")
+        obj.className += ' active'
+        console.log(obj)
+    </script>
+    <section id="team" class="team-section pt-100" style="background-image:url('/static/assets/images/common-bg.svg')">
+        <div class="container">
+            <div class="row align-items-center">
+                <div id="echarts" style="width: 400px;height:400px;" class="col"></div>
+                <div class="col">
+                    <p class="text-left text-body">
+                        根据AI智能分析您需要注意以下单词的发音
+                    </p>
+                    <div class="row" id="textarea">
+                        {% for key in similarWords %}
+                            <div class="col-3">
+                                <span style="font-size: 20px"> {{ key }}</span>
+                            </div>
+                        {% endfor %}
+                    </div>
+                    <button class="btn-warning btn-circle fade-in follow" id="fbutton"></button>
+                </div>
+            </div>
+        </div>
+    </section>
+    <style>
+        .follow {
+            float: right;
+            margin-right: 15%;
+            width: 50px;
+            text-align: center;
+        }
+    </style>
+    <script>
+        var myChart = echarts.init(document.getElementById('echarts'));
+        // 绘制图表
+        myChart.setOption({
+            title: {
+                text: '错误单词分类'
+            },
+            tooltip: {
+                trigger: 'axis',
+                axisPointer: {
+                    type: 'shadow'
+                }
+            },
+            legend: {},
+            grid: {
+                left: '3%',
+                right: '4%',
+                bottom: '3%',
+                containLabel: true
+            },
+            xAxis: {
+                type: 'value',
+                boundaryGap: [0, 0.01]
+            },
+            yAxis: {
+                type: 'category',
+                data: ['名词', '形容词', '代词', '副词', '动词', '数词']
+            },
+            series: [
+                {
+                    name: '2023-3',
+                    type: 'bar',
+                    data: [274, 302, 18, 104, 131, 27]
+                },
+                {
+                    name: '2023-4',
+                    type: 'bar',
+                    data: [101, 202, 3, 61, 80, 27]
+                }
+            ]
+        });
+
+        var text = document.getElementById("textarea").innerText;
+        console.log(text);
+        var blob = new Blob([text], {type: "text/comma-separated-values"});
+        var a = document.createElement("a");
+        {#a.setAttribute("class", "follow")#}
+        a.href = URL.createObjectURL(blob);
+        var s = "abc"
+        a.download = s+".txt";
+        a.innerHTML = "导出"
+        document.getElementById("fbutton").appendChild(a);
+
+    </script>
+
+
+
+{% endblock %}

@@ -1,0 +1,114 @@
+{% extends 'index.html' %}
+
+{% block content %}
+    <script>
+        var obj = document.getElementById("keywords")
+        obj.className += ' active'
+        console.log(obj)
+    </script>
+    <section id="team" class="team-section pt-100" style="background-image:url('/static/assets/images/common-bg.svg')">
+        <div class="container" style="margin-top: 0">
+            <div class="">
+                <div style="">
+                    <p id="audioTxt" class="text-center font-weight-bold">
+                        {{ audioTxt }}
+                    </p>
+                </div>
+                <div class="form-group mt-5">
+                    <p style="color: black">
+                        请再次选择刚才上传的音频
+                    </p>
+                    <input type="file" id="audio-file2" accept="audio/*" class="form-control-file">
+                    <audio id="audio-player2" controls class="w-100"></audio>
+                </div>
+                <form method="POST" class="form-group mt-5" action=/histortyRecord/>
+                    <div class="form-group">
+                        <label for="nameOfAudio">You can edit the name of the audio now:</label>
+                        <input name="nameOfAudio" class="form-control" value={{ details.name }}>
+
+                    </div>
+                    {% for obj in keywords %}
+                        <div class="form-group">
+                            <label for="content">Details of the audio:</label>
+                            <div>
+                                    <textarea id="content" name="detailsOnce" class="form-control"
+                                              style="resize: none;">{{ obj }}</textarea>
+                                <label>key word:</label>
+                                <input id="contentWord" name="detailsWord" class="form-control"
+                                       style="width: 10%;"></input>
+                            </div>
+
+                        </div>
+                    {% endfor %}
+                    <input type="submit" value="Confirm " class="main-btn btn-hover" style="float: right">
+                </form>
+            </div>
+        </div>
+    </section>>
+    <p id="timepoints" style="color:white;">
+        {{ timePoints }}
+    </p>
+
+
+    <script src="http://libs.baidu.com/jquery/2.0.0/jquery.js"></script>
+
+    <script>
+        const audioFile = document.getElementById("audio-file2");
+        const audioPlayer = document.getElementById("audio-player2");
+
+        audioFile.addEventListener("change", () => {
+            const file = audioFile.files[0];
+            const reader = new FileReader();
+            reader.onload = function () {
+                audioPlayer.src = reader.result;
+            };
+            reader.readAsDataURL(file);
+        });
+        {#正则匹配替换key words#}
+        let search = {{keywords|safe}}
+            console.log('keywords, ', search)
+        let pairs = {{ timePoints |safe}}
+
+        let text = document.getElementById("audioTxt").innerHTML;
+        let tempText = text;
+        search.forEach((keyword, index) => {
+            keyword = keyword.replace(/^\s+|\s+$/g, "")
+            let re = new RegExp(keyword, "gi");
+            console.log(re)
+            idOfNew = "highlighted" + index.toString()
+            console.log('idOfNew', idOfNew)
+            styleNew = "<span id=" + idOfNew + " style='color:red; cursor:pointer;'>" + keyword + "  [" + (index + 1).toString() + "]" + "</span>"
+            tempText = tempText.replace(re, styleNew);
+        });
+        document.getElementById("audioTxt").innerHTML = tempText;
+        console.log('document.getElementById("audioTxt").innerHTML', document.getElementById("audioTxt").innerHTML)
+        {#点击颜色点播放语音#}
+        let keyWordsArray = []
+
+        let audio = document.getElementById("audio-player2")
+        console.log('audio ==== ', audio)
+        search.forEach((keyword, index) => {
+
+            keyWordsArray[index] = document.getElementById("highlighted" + index.toString())
+            keyWordsArray[index].addEventListener("click", function () {
+                parisIndex = index * 2
+                audio.currentTime = parseFloat(Math.floor(pairs[parisIndex] / 1000))
+                console.log('audio.currentTime', audio.currentTime,"s")
+                let playAfter = audio.play();
+                if (playAfter) {
+                    playAfter.then(() => {
+                        setTimeout(() => {
+                            audio.pause();
+                        }, (pairs[parisIndex + 1] - pairs[parisIndex]));
+                    });
+                }
+
+                console.log('keyWordsArray[index+1]-keyWordsArray[index] ms', pairs[index + 1] - pairs[index])
+
+            });
+
+        });
+
+
+    </script>
+{% endblock %}

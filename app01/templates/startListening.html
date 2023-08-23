@@ -1,0 +1,133 @@
+{% extends 'index.html' %}
+
+{% block content %}
+    <script>
+        var obj = document.getElementById("startlistening")
+        obj.className += ' active'
+        console.log(obj)
+    </script>
+    <section id="home" class="hero-section">
+        <div class="container">
+            <div class="row align-items-center bg-black">
+                <div class="">
+                    <div class="hero-content">
+                        <p class="text-center text-body" style="font-size: 24px; color: #333;">
+                            选择你的音频,点击开始播放,当遇到听不懂的地方立刻<span class="text-danger">长按下 </span>"record"按钮
+                            当听明白时松开按钮
+                        </p>
+                        <p class="text-center text-body" style="font-size: 24px; color: #333;">
+                            完成听力时先点击 stoplistening 后再点击 show result
+                        </p>
+
+
+                        <form action="/listenRecord/" method="post" enctype="multipart/form-data">
+                            <div class="form-group">
+                                {% csrf_token %}
+                                <input type="file" id="audio-file" accept="audio/*" class="form-control-file"
+                                       name="audiofile">
+                                <input type="submit" value="确认">
+                            </div>
+                            <div class="form-group">
+                                <audio id="audio-player" controls class="w-100"></audio>
+                            </div>
+                        </form>
+                        <div class="form-group">
+                            <button id="stopListening" class="btn btn-danger ml-3" onclick="stopListening()"
+                                    style="font-size: 16px;">
+                                Stop Listening
+                            </button>
+                            <div class="text-center ">
+                                <button id="record" type="button" class="btn-warning btn-circle fade-in"
+                                        data-mdb-animation="true"
+                                        style="font-size: 50px;height: 200px;  width: 200px; border-radius:50%; border:none">
+                                    Record
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <script src="http://libs.baidu.com/jquery/2.0.0/jquery.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/file-saver@2.0.5/dist/FileSaver.min.js"></script>
+
+    <script>
+        var button = document.getElementById('record');
+        button.addEventListener('mousedown', function () {
+            button.style.backgroundColor = '#99ecf2';
+        });
+        button.addEventListener('mouseup', function () {
+            button.style.backgroundColor = '#ffc107';
+        });
+
+        const audioFile = document.getElementById("audio-file");
+        const audioPlayer = document.getElementById("audio-player");
+
+        recordingTime = []
+        recordNum = 0;
+
+        function stopListening() {
+            console.log(recordingTime)
+            console.log('button');
+            $.ajax(
+                {
+                    url: "/tp/",
+                    type: "POST",
+                    data: {
+                        recordingTime
+                    },
+                    success: function (result) {
+                        console.log('successs：', result);
+                        {#window.location.href = "/listenRecord/";#}
+                    }
+                });
+        }
+
+        record.addEventListener("mousedown", function () {
+            recordingTime[recordNum] = parseInt(audioPlayer.currentTime * 1000);
+            recordNum++;
+            console.log('recordNum = ', recordNum, audioPlayer.currentTime);
+        })
+        record.addEventListener("mouseup", function () {
+            recordingTime[recordNum] = parseInt(audioPlayer.currentTime * 1000);
+            if (recordingTime[recordNum] - recordingTime[recordNum - 1] < 2000) {
+                recordingTime[recordNum] = recordingTime[recordNum - 1] + 2000
+            }
+            recordNum++;
+            console.log('recordNum = ', recordNum);
+        })
+        // Handle file upload
+
+        audioFile.addEventListener("change", () => {
+            const file = audioFile.files[0];
+            const reader = new FileReader();
+
+            reader.onload = function () {
+                audioPlayer.src = reader.result;
+            };
+            {#saveAs(file, 'audio.wav');#}
+            reader.readAsDataURL(file);
+
+        });
+        audioFile.addEventListener('change', function (event) {
+            var file = event.target.files[0];
+            var xhr = new XMLHttpRequest();
+            xhr.setRequestHeader('Access-Control-Allow-Origin', 'http://1.14.71.234/upload');
+            xhr.open('POST', 'http://1.14.71.234/upload', true);
+            var formData = new FormData();
+            formData.append('audio', file);
+            formData.append('folder', '/data/myproject');
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === XMLHttpRequest.DONE) {
+                    if (xhr.status === 200) {
+                        console.log('音频上传成功');
+                    } else {
+                        console.log('音频上传失败');
+                    }
+                }
+            };
+            xhr.send(formData);
+        });
+    </script>
+{% endblock %}

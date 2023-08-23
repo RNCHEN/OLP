@@ -1,0 +1,100 @@
+{% extends 'index.html' %}
+<!-- 最新版本的 Bootstrap 核心 CSS 文件 -->
+
+{% block content %}
+
+    <script>
+        var obj = document.getElementById("history")
+        obj.className += ' active'
+        console.log(obj)
+    </script>
+    <section id="team" class="team-section pt-100" style="background-image:url('/static/assets/images/common-bg.svg')">
+        <div class="container">
+            <div style="margin-left: 20%;margin-right: 20%" class="table-hover">
+
+                <table class="table table-bordered" id="disPlayTable" style="background:#dafdff" >
+                    <tr id="thead">
+                        <th scope="col">日期</th>
+                        <th scope="col">听力名称</th>
+                        <th scope="col">未听清部分</th>
+                        <th scope="col">关键单词</th>
+                    </tr>
+                    {% for obj in confirmData %}
+                        <tr style="background-color: #ffffff;" class="display">
+                            <td style="width: 150px">  {{ obj.date }} </td>
+                            <td style="width: 150px">{{ obj.nameOfRadio }}</td>
+                            <td>{{ obj.details }} </td>
+                            <td>{{ obj.keyword }} </td>
+                        </tr>
+                    {% endfor %}
+                    <!-- add more rows as needed -->
+                </table>
+                <div class="d-flex flex-row-reverse">
+                    <a href="/aiAna/">
+                        <button type="button" class="btn btn-primary">Go to AI analysis</button>
+                    </a>
+                </div>
+            </div>
+
+            {#        <nav aria-label="Page navigation">#}
+            {#            <ul class="pagination d-flex justify-content-center">#}
+            {#                <li>#}
+            {#                    <a href="#" aria-label="Previous">#}
+            {#                        <span aria-hidden="true">&laquo;</span>#}
+            {#                    </a>#}
+            {#                </li>#}
+            {#                <li><a href="#">1</a></li>#}
+            {#                <li><a href="#">2</a></li>#}
+            {#                <li><a href="#">3</a></li>#}
+            {#                <li><a href="#">4</a></li>#}
+            {#                <li><a href="#">5</a></li>#}
+            {#                <li>#}
+            {#                    <a href="#" aria-label="Next">#}
+            {#                        <span aria-hidden="true">&raquo;</span>#}
+            {#                    </a>#}
+            {#                </li>#}
+            {#            </ul>#}
+            {#        </nav>#}
+        </div>
+    </section>
+
+
+
+
+    <script>
+
+        let displayDataALl = {{confirmData|safe}}
+            console.log('displayDataALl', displayDataALl)
+
+        {#let colorArray = {{ confirmData.nameOfRadio }}#}
+        {#    console.log('colorArray', colorArray)#}
+        {#let disPlayTable = document.getElementById("disPlayTable").getElementsByTagName("tr")#}
+
+
+        let disPlayTable = document.querySelectorAll(".display")
+
+        console.log('disPlayTable', disPlayTable)
+        let flagOfColor = "thead"
+
+        console.log('document.querySelectorAll(disPlayTable[i].getAttribute("id"))', document.querySelectorAll(".test11"))
+
+        var links = document.querySelectorAll('.pagination a');
+
+        for (var i = 0; i < links.length; i++) {
+            links[i].addEventListener('click', function (event) {
+                event.preventDefault();
+                // Highlight the active link
+                for (var j = 0; j < links.length; j++) {
+                    links[j].classList.remove('active');
+                }
+                this.classList.add('active');
+
+                // Load the corresponding data
+                var pageNumber = parseInt(this.innerText);
+                console.log('pageNumber', pageNumber)
+            });
+        }
+
+    </script>
+
+{% endblock %}
