@@ -1,8 +1,12 @@
-readme
+Transit from Gitee
 
-项目可以正常使用啦！！！太激动了，也算是自己的第一个小作品了
+You can use it to practice your listening comprehension
+- have your own Linux server like CentOS
+- modify your MySQL
+  python manage.py makemigratios
+  python manage.py migrate
+- Activate your Python environment
+- cd the project and run
+     python manage.py runserver 0.0.0.0:8000
 
-但是是最基础的，还有很多功能测试没有完成
-
-很多的性能优化还没有做
-
+the audio named XYS_JH_001_C2 is a sample audio you can use 
