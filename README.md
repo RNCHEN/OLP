@@ -1,2 +1,2 @@
 # OLP
-Practice your English listening by yourself !
+See details in MASTER branch 
