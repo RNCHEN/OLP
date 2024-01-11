@@ -1,4 +1,4 @@
-Transit from Gitee
+Sorry the AWS is expired :(
 
 You can use it to practice your listening comprehension
 - have your own Linux server like CentOS
